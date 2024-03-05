@@ -21,7 +21,7 @@ def recortar_imagen(imagen, x, y, ancho, alto, nombre_original):
         return None, None
 
 # Ruta de la carpeta que deseas recorrer
-carpeta = "/home/ale/Documents/repos/Images Process/fotitos"
+carpeta = "/home/ale/Documents/repos/Images Process/imagenes"
 
 # Obtener la lista de archivos en la carpeta
 a_recorrer = os.listdir(carpeta)
@@ -43,6 +43,10 @@ for nombre_archivo in a_recorrer:
 
 # Mostrar la primera imagen recortada como ejemplo
 imagen_recortada, nombre_salida = recortar_imagen(imag, x, y, ancho, alto, nombre_original)
+print (nombre_original)
+print(nombre_salida)
 cv.imshow("Imagen Recortada", imagen_recortada)
 cv.waitKey(0)
 cv.destroyAllWindows()
+
+

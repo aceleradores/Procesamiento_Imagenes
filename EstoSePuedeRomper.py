@@ -1,18 +1,28 @@
 import cv2
 import numpy as np
-import os
 
-#NO LO MODIFIQUES PORQUE ES MAS RAPIDO
-# Ruta del directorio que contiene las imágenes
-directorio_imagenes = r"/home/ale/Documents/repos/Images Process/fotos"
 
-# Llamar a la función y obtener el resultado
-resultado = conversor_rgb(directorio_imagenes)
-
-# Hacer algo con el resultado, por ejemplo, mostrar la imagen resultante
-if resultado is not None:
-    cv2.imshow("Resultado Final", resultado)
+# redBajo2=np.array([175, 100, 20], np.uint8)
+# redAlto2=np.array([179, 255, 255], np.uint8)
+def test_mascara (imagen, color1, color2 ):
+    frameHSV = cv2.cvtColor(imagen, cv2.COLOR_BGR2HSV)
+    maskRed = cv2.inRange(frameHSV, color1, color2)
+    # maskRed2 = cv2.inRange(frameHSV, redBajo2, redAlto2)
+    
+    maskRedvis = cv2.bitwise_and(imagen, imagen, mask= maskRed)        
+  
+    cv2.imshow('maskRed', maskRed)
+    cv2.imshow('maskRedvis', maskRedvis)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
+
+img = cv2.imread('imagenes/20220204120649__800_1999983.jpg')
+
+redBajo1 = np.array([135, 75, 20], np.uint8)
+redAlto1 = np.array([170, 255, 255], np.uint8)
+
+
+
+test_mascara(img, redAlto1, redBajo1)

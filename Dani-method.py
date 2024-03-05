@@ -10,10 +10,10 @@ def diferencia_imagenes (imagen1, imagen2):
     imagen_a = np.uint8(imagen1)
     imagen_b = np.uint8(imagen2)
     peso_a = 1
-    peso_b = 2
+    peso_b = 3
 
     # diferencia = cv.subtract(imagen_a, imagen_b)
-    diferencia = cv.addWeighted(imagen_a, peso_a, -imagen_b, peso_b, 0.1)
+    diferencia = cv.addWeighted(imagen_a, peso_a, -imagen_b, peso_b, 1)
     cv.imwrite("diferencia.jpg" , diferencia)
     return diferencia
 
@@ -47,10 +47,11 @@ def convertir_hsv (imagen_hsv):
     #hay que convertir a hsv 
     # hacer una mascara para trabajar solamente en el ¿h? => revisar el canales para
 
-def recortar_imagen(imagen, x, y, ancho, alto, nombre_original):
+def recortar_imagen(imagen, x, y, ancho, alto):
+    nombre_archivo, _ = os.path.basename(imagen)
     if imagen is not None:
         imagen_recortada = imagen[y:y+alto, x:x+ancho] 
-        nombre_salida = f"{nombre_original}_recortada.jpg"
+        nombre_salida = f"{nombre_archivo}_recortada.jpg"
         cv.imwrite(nombre_salida, imagen_recortada)
         return imagen_recortada, nombre_salida
     else:
@@ -58,34 +59,12 @@ def recortar_imagen(imagen, x, y, ancho, alto, nombre_original):
         return None, None
 
 
-img1 = cv.imread('base_recortada.jpg')
-img2 = cv.imread('imagen_promedio.jpg')
-
-# nombre_original, _ = os.path.splitext(img1)
-
-convertir_hsv(img2)
-convertir_hsv(img1)
 
 
-# diferencia_imagenes (img2, img1)
 
-# img_diferencia = cv.imread("diferencia.jpg")
+img1 = cv.imread('base.jpg')
+img2 = cv.imread('img1.jpg')
+x, y, anch, alto =  700, 0, 900, 900
 
-# convertir_gris (img_diferencia)
-
-# img_binary = cv.imread("gris2.jpg")
-
-# imagen_binary (img_binary)
-
-# img_limpia = cv.imread("binario2.jpg")
-
-# imagen_limpia (img_limpia)
-
-# # plt.hist(img1.ravel(),256,[0,256]) 
-# # plt.show() 
-
-# plt.hist(img2.ravel(), bins=256, range=(0, 100), fc='k', ec='k')
-# plt.show()
-
-
+recortar_imagen(img1,x, y, anch, alto)
 
