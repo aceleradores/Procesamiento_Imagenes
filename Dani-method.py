@@ -47,8 +47,11 @@ def convertir_hsv (imagen_hsv):
     #hay que convertir a hsv 
     # hacer una mascara para trabajar solamente en el ¿h? => revisar el canales para
 
-def recortar_imagen(imagen, x, y, ancho, alto):
-    nombre_archivo, _ = os.path.basename(imagen)
+
+#HAY QUE HACER UNA FN QUE ME PERMITA RECORRER LA RUTA Y 
+# DEVUELVA UN STRING 
+
+def recortar_imagen(imagen, x, y, ancho, alto, nombre_archivo ):
     if imagen is not None:
         imagen_recortada = imagen[y:y+alto, x:x+ancho] 
         nombre_salida = f"{nombre_archivo}_recortada.jpg"
@@ -60,8 +63,9 @@ def recortar_imagen(imagen, x, y, ancho, alto):
 
 
 
-
-
+#El problema (IDIOTA) es que estas mandando un ndarray cuando
+#cuando deberias mandar como variable el string (IMBECIL)
+img_nombre = 'base.jpg'
 img1 = cv.imread('base.jpg')
 img2 = cv.imread('img1.jpg')
 x, y, anch, alto =  700, 0, 900, 900
