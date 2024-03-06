@@ -37,10 +37,10 @@ def imagen_limpia (imagen_limpia):
     cv.imwrite("imagenlimpia2.jpg", erosion)
     return erosion
 
-def convertir_hsv (imagen_hsv):
+def convertir_hsv (imagen_hsv, nombre):
     image_convertida = cv.cvtColor(imagen_hsv, cv.COLOR_BGR2HSV)
-    cv.imwrite(f"{image_convertida}-hsv.jpg", image_convertida)
-    # cv.imshow("v", v )
+    cv.imwrite(f"{os.path.splitext(nombre)}-hsv.jpg", image_convertida)
+    cv.imshow("v", v )
     # cv.waitKey(0)
     return image_convertida
 
@@ -48,27 +48,31 @@ def convertir_hsv (imagen_hsv):
     # hacer una mascara para trabajar solamente en el ¿h? => revisar el canales para
 
 
-#HAY QUE HACER UNA FN QUE ME PERMITA RECORRER LA RUTA Y 
-# DEVUELVA UN STRING 
-
-def recortar_imagen(imagen, x, y, ancho, alto, nombre_archivo ):
-    if imagen is not None:
-        imagen_recortada = imagen[y:y+alto, x:x+ancho] 
-        nombre_salida = f"{nombre_archivo}_recortada.jpg"
+# CUIDADO CON LA GESTION DE DATATYPE
+#El problema es que estas mandando un ndarray cuando
+#cuando deberias mandar un string 
+def recortar_imagen(ruta_imagen, x, y, ancho, alto):
+    if ruta_imagen is not None:
+        imagen_leida = cv.imread(ruta_imagen)
+        imagen_recortada = imagen_leida[y:y+alto, x:x+ancho]
+        nombre_salida = f"{os.path.splitext(ruta_imagen)}_recortada.jpg"
+        print (nombre_salida)
         cv.imwrite(nombre_salida, imagen_recortada)
         return imagen_recortada, nombre_salida
-    else:
-        print("No se pudo cargar la imagen.")
-        return None, None
+
+img1 = '/home/ale/Documents/repos/Images Process/base.jpg'
 
 
+# x, y, anch, alto = 700, 0, 900, 900
+# recortar_imagen(img1, x, y, anch, alto)
+carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
+carpeta_origen = os.listdir(carpeta)
 
-#El problema (IDIOTA) es que estas mandando un ndarray cuando
-#cuando deberias mandar como variable el string (IMBECIL)
-img_nombre = 'base.jpg'
-img1 = cv.imread('base.jpg')
-img2 = cv.imread('img1.jpg')
-x, y, anch, alto =  700, 0, 900, 900
 
-recortar_imagen(img1,x, y, anch, alto)
+for images in carpeta_origen:
+    x, y, anch, alto = 700, 0, 900, 900
+    imagen_recortada, nombre_salida = recortar_imagen(images, x, y, anch, alto)
+    
+    imagen_hsv= convertir_hsv(imagen_recortada, nombre_salida)
+    cv.imshow (imagen_hsv)
 
