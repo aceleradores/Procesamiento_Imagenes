@@ -1,52 +1,41 @@
-import cv2 as cv
-import numpy as np
 import os
+import cv2 as cv
 
+def recortar_imagen(imagen_leida, x, y, ancho, alto, nombre_original):
+    imagen_recortada = imagen_leida[y:y+alto, x:x+ancho]
+    nombre_salida = f"{os.path.splitext(nombre_original)[0]}_recortada.jpg"
+    print(f"Salio todo bien con {nombre_salida}")
+    cv.imwrite(nombre_salida, imagen_recortada)
+    return imagen_recortada, nombre_salida
 
-def recortar_imagen(imagen, x, y, ancho, alto, nombre_original):
-    if imagen is not None:
-        # Recortar la región de interés (ROI)
-        imagen_recortada = imagen[y:y+alto, x:x+ancho]
+def armado_rutas(directorio):
+    imagenes = []
 
-        # Construir el nombre del archivo de salida
-        nombre_salida = f"{nombre_original}_recortada.jpg"
+    directorio_recorrido = os.listdir(directorio)
 
-        # Guardar la imagen recortada
-        cv.imwrite(nombre_salida, imagen_recortada)
+    for archivo in directorio_recorrido:
+        if archivo is not None:
+            imagen = os.path.join(directorio, archivo)
+            nombre_salida, _ = os.path.splitext(archivo)
+            imagen_leida = cv.imread(imagen)
 
-        # Devolver la imagen recortada y el nombre del archivo de salida
-        return imagen_recortada, nombre_salida
-    else:
-        print("No se pudo cargar la imagen.")
-        return None, None
+            if imagen_leida is not None:
+                imagenes.append((imagen_leida, nombre_salida))
+                print(f"Salio todo piola con {nombre_salida}")
+            else:
+                print(f"No se pudo cargar la imagen: {imagen}")
+        else:
+            print('Ale la cago')
+    print (imagenes)
+    return imagenes
 
-# Ruta de la carpeta que deseas recorrer
-carpeta = "/home/ale/Documents/repos/Images Process/imagenes"
+# Rutas de las imágenes
+carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
 
-# Obtener la lista de archivos en la carpeta
-a_recorrer = os.listdir(carpeta)
+# Obtener lista de imágenes y nombres
+imagenes = armado_rutas(carpeta)
 
-for nombre_archivo in a_recorrer:
-    # Construir la ruta completa del archivo
-    ruta_completa = os.path.join(carpeta, nombre_archivo)
-
-    # Cargar la imagen
-    imag = cv.imread(ruta_completa)
-
-    # Obtener el nombre del archivo sin la extensión
-    nombre_original, _ = os.path.splitext(nombre_archivo)
-    # Coordenadas y dimensiones del recorte
-    x, y, ancho, alto =  700, 0, 900 , 900
-
-    # Llamar a la función de recorte
-    recortar_imagen(imag, x, y, ancho, alto, nombre_original)
-
-# Mostrar la primera imagen recortada como ejemplo
-imagen_recortada, nombre_salida = recortar_imagen(imag, x, y, ancho, alto, nombre_original)
-print (nombre_original)
-print(nombre_salida)
-cv.imshow("Imagen Recortada", imagen_recortada)
-cv.waitKey(0)
-cv.destroyAllWindows()
-
-
+# Recortar cada imagen en la lista
+x, y, anch, alto = 700, 0, 900, 900
+for imagen_a, nombre_a in imagenes:
+    recortar_imagen(imagen_a, x, y, anch, alto, nombre_a)

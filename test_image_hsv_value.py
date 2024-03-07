@@ -5,7 +5,7 @@ def nothing(x):
     pass
 
 
-image = cv2.imread('imagenes/20220204121951__800_1999983.jpg')
+image = cv2.imread('/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada.jpg')
 
 # Create a window
 cv2.namedWindow('image')
