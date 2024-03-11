@@ -7,13 +7,11 @@ from matplotlib import pyplot as plt
 #convertir unt8
 
 def diferencia_imagenes (imagen1, imagen2):
-    imagen_a = np.uint8(imagen1)
-    imagen_b = np.uint8(imagen2)
     peso_a = 1
     peso_b = 3
 
     # diferencia = cv.subtract(imagen_a, imagen_b)
-    diferencia = cv.addWeighted(imagen_a, peso_a, -imagen_b, peso_b, 1)
+    diferencia = cv.addWeighted(imagen1, peso_a, -imagen2, peso_b, 1)
     cv.imwrite("diferencia.jpg" , diferencia)
     return diferencia
 
@@ -50,8 +48,6 @@ def convertir_hsv (imagen_hsv, nombre):
     cv.imwrite(nombre_salida_hsv_sumada, mask_hsv_sumada )
     cv.imwrite(nombre_salida_hsv_mask, mask_hsv)
     cv.imwrite(nombre_salida, image_convertida)
-    # cv.imshow("v", v )
-    # cv.waitKey(0)
     return image_convertida
 
     #hay que convertir a hsv 
@@ -89,11 +85,21 @@ def armado_rutas (directorio):
 x, y, anch, alto = 720, 200, 800, 300
 # recortar_imagen(img1, x, y, anch, alto)
 carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
+
+#entorno de pruebas, no lo borres
+imagenes_leidas = []
 array_imagenes = armado_rutas(carpeta)
 for imagen_a , nombre_a in array_imagenes:
     imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
-    diferencia_imagenes ()
+    imagenes_leidas.append((imagen_recortada, nombre_original))
+
+
+
 carpeta_base = 'base'
 imagen_base = armado_rutas(carpeta_base)
 imagen_base, nombre_base = recortar_imagen() 
 #funcion para poder trabajar con la base y dejarla como variable global. 
+
+
+
+#
