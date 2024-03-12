@@ -4,16 +4,17 @@ import os
 from matplotlib import pyplot as plt 
 
 
-#convertir unt8
+
 
 def diferencia_imagenes (imagen1, imagen2):
     peso_a = 1
-    peso_b = 3
-
+    peso_b = 2
+    # armar una mascara de la diferencia para pegarle arriba de la imagen original?
     # diferencia = cv.subtract(imagen_a, imagen_b)
-    diferencia = cv.addWeighted(imagen1, peso_a, -imagen2, peso_b, 1)
+    diferencia = cv.addWeighted(imagen1, peso_a, -imagen2, peso_b, .5)
     cv.imwrite("diferencia.jpg" , diferencia)
     return diferencia
+
 
 
 def convertir_gris (imagen):
@@ -84,22 +85,28 @@ def armado_rutas (directorio):
 
 x, y, anch, alto = 720, 200, 800, 300
 # recortar_imagen(img1, x, y, anch, alto)
-carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
+# carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
 
-#entorno de pruebas, no lo borres
-imagenes_leidas = []
-array_imagenes = armado_rutas(carpeta)
-for imagen_a , nombre_a in array_imagenes:
-    imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
-    imagenes_leidas.append((imagen_recortada, nombre_original))
+# #entorno de pruebas, no lo borres
+# imagenes_leidas = []
+# array_imagenes = armado_rutas(carpeta)
+# for imagen_a , nombre_a in array_imagenes:
+#     imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
+#     imagenes_leidas.append((imagen_recortada, nombre_original))
 
+# nombre_base_recortada = None
+# imagen_base_recortada = None
 
+# carpeta_base = '/home/ale/Documents/repos/Images Process/base'
 
-carpeta_base = 'base'
-imagen_base = armado_rutas(carpeta_base)
-imagen_base, nombre_base = recortar_imagen() 
-#funcion para poder trabajar con la base y dejarla como variable global. 
+# imagen_base_array = armado_rutas(carpeta_base)
+# for imagen_base, nombre_base in imagen_base_array:
+#     imagen_base_recortada, nombre_base_recortada = recortar_imagen(imagen_base,x, y, anch, alto, nombre_base ) 
+# #funcion para poder trabajar con la base y dejarla como variable global. 
 
 
 
 #
+Diferencia_base = cv.imread('/home/ale/Documents/repos/Images Process/base_recortada.jpg')
+diferencia_recortada = cv.imread('/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada.jpg')
+diferencia_imagenes(Diferencia_base, diferencia_recortada)
