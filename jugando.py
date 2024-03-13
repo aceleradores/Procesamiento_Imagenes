@@ -26,7 +26,6 @@ def armado_rutas(directorio):
                 print(f"No se pudo cargar la imagen: {imagen}")
         else:
             print('Ale la cago')
-    print (imagenes)
     return imagenes
 
 # Rutas de las imágenes

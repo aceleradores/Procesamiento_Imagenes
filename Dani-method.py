@@ -9,8 +9,7 @@ from matplotlib import pyplot as plt
 def diferencia_imagenes (imagen1, imagen2):
     peso_a = 1
     peso_b = 2
-    # armar una mascara de la diferencia para pegarle arriba de la imagen original?
-    # diferencia = cv.subtract(imagen_a, imagen_b)
+  #Acomodar funcion para que devuelva ademas de la imagen, el nombre dentro de un array 
     diferencia = cv.addWeighted(imagen1, peso_a, -imagen2, peso_b, .5)
     cv.imwrite("diferencia.jpg" , diferencia)
     return diferencia
@@ -83,20 +82,85 @@ def armado_rutas (directorio):
 #Devuelve un array con las imagenes
 
 
+def pasar_hsv(imagen, nombre_imagen):
+    imagen_convertida = cv.cvtColor(imagen, cv.COLOR_BGR2HSV)
+    nombre_salida_hsv = f"{os.path.splitext(nombre_imagen)[0]}_hsv.jpg"
+    cv.imwrite(nombre_salida_hsv, imagen_convertida)
+
+    h, s, v = cv.split(imagen_convertida)
+    cv.imshow("H", h)
+    cv.imshow("S", s)
+    cv.imshow("V", v)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+
+    return imagen_convertida, nombre_salida_hsv
+
+
+def encontrar_puntos_maximos(imagen_hsv, lineas):
+    h, s, v = cv.split(imagen_hsv)
+    max_s_points = []
+    max_v_points = []
+
+    for x in lineas:
+        s_column = s[:, x]
+        v_column = v[:, x]
+
+        max_s_y = np.argmax(s_column)
+        max_s_value = s[max_s_y, x]
+        max_s_points.append((x, max_s_y, max_s_value))
+
+    
+        max_v_y = np.argmax(v_column)
+        max_v_value = v[max_v_y, x]
+        max_v_points.append((x, max_v_y, max_v_value))
+
+    return max_s_points, max_v_points
+
+
+
+
 x, y, anch, alto = 720, 200, 800, 300
+muestras_puntos = [100, 200, 300, 400, 500, 600, 700]
+
 # recortar_imagen(img1, x, y, anch, alto)
-# carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
+carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
 
 # #entorno de pruebas, no lo borres
-# imagenes_leidas = []
-# array_imagenes = armado_rutas(carpeta)
-# for imagen_a , nombre_a in array_imagenes:
-#     imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
-#     imagenes_leidas.append((imagen_recortada, nombre_original))
+imagenes_leidas = []
+imagenes_hsv = []
+array_imagenes = armado_rutas(carpeta)
+for imagen_a , nombre_a in array_imagenes:
+    imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
+    imagenes_leidas.append((imagen_recortada, nombre_original))
+    for imagen_recortada, nombre_original in imagenes_leidas:
+        imagen_recortada_hsv, nombre_recortada_hsv = pasar_hsv(imagen_recortada, nombre_original)
+        imagenes_hsv.append((imagen_recortada_hsv, nombre_recortada_hsv))
 
-# nombre_base_recortada = None
-# imagen_base_recortada = None
+nombre_base_recortada = None
+imagen_base_recortada = None
 
+
+
+max_s_points, max_v_points = encontrar_puntos_maximos(imagen_recortada_hsv, muestras_puntos) 
+plt.subplot(1, 2, 1)
+plt.title("Puntos Máximos de S")
+plt.scatter([point[0] for point in max_s_points], [point[1] for point in max_s_points], c='red', label='S')
+plt.xlabel('Valor de x')
+plt.ylabel('Coordenada y')
+plt.legend()
+print("salio bien")
+
+
+plt.subplot(1, 2, 2)
+plt.title("Puntos Máximos de V")
+plt.scatter([point[0] for point in max_v_points], [point[1] for point in max_v_points], c='blue', label='V')
+plt.xlabel('Valor de x')
+plt.ylabel('Coordenada y')
+plt.legend()
+
+plt.tight_layout()
+plt.show()
 # carpeta_base = '/home/ale/Documents/repos/Images Process/base'
 
 # imagen_base_array = armado_rutas(carpeta_base)
@@ -106,7 +170,10 @@ x, y, anch, alto = 720, 200, 800, 300
 
 
 
-#
-Diferencia_base = cv.imread('/home/ale/Documents/repos/Images Process/base_recortada.jpg')
-diferencia_recortada = cv.imread('/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada.jpg')
-diferencia_imagenes(Diferencia_base, diferencia_recortada)
+
+# Diferencia_base = cv.imread('/home/ale/Documents/repos/Images Process/base_recortada.jpg')
+# diferencia_recortada = cv.imread('/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada.jpg')
+# diferencia_imagenes(Diferencia_base, diferencia_recortada)
+
+
+
