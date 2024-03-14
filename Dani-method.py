@@ -3,6 +3,7 @@ import numpy as np
 import os
 from matplotlib import pyplot as plt 
 
+#hacer 6 cortes antes de procesar imagenn??
 
 
 
@@ -88,36 +89,35 @@ def pasar_hsv(imagen, nombre_imagen):
     cv.imwrite(nombre_salida_hsv, imagen_convertida)
 
     h, s, v = cv.split(imagen_convertida)
-    cv.imshow("H", h)
-    cv.imshow("S", s)
-    cv.imshow("V", v)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+
 
     return imagen_convertida, nombre_salida_hsv
 
 
 def encontrar_puntos_maximos(imagen_hsv, lineas):
     h, s, v = cv.split(imagen_hsv)
-    max_s_points = []
-    max_v_points = []
-
+   
+    v_maximos = []
     for x in lineas:
-        s_column = s[:, x]
-        v_column = v[:, x]
-
-        max_s_y = np.argmax(s_column)
-        max_s_value = s[max_s_y, x]
-        max_s_points.append((x, max_s_y, max_s_value))
-
-    
-        max_v_y = np.argmax(v_column)
-        max_v_value = v[max_v_y, x]
-        max_v_points.append((x, max_v_y, max_v_value))
-
-    return max_s_points, max_v_points
+        columna_v = v[:, x]
+        indice_max_v = np.argmax(columna_v) #devuelve el  indice del valor maximo 
+        max_v = v[indice_max_v, x] 
+        v_maximos.append((x, indice_max_v, max_v))
+        # print (v_maximos)
+        #Ojo! Revisar para ver si se puede encontrar mejor manera
+    return v_maximos
 
 
+def encontrar_recta (array_ordenadas):
+    x = []
+    y = []
+    for xmax, index,  vmax in array_ordenadas :
+        x.append(xmax)
+        y.append(vmax)
+    print ("x:",x)
+    print ("y:",y)
+    z = np.polyfit(x, y, 1)
+    return z
 
 
 x, y, anch, alto = 720, 200, 800, 300
@@ -142,38 +142,32 @@ imagen_base_recortada = None
 
 
 
-max_s_points, max_v_points = encontrar_puntos_maximos(imagen_recortada_hsv, muestras_puntos) 
-plt.subplot(1, 2, 1)
-plt.title("Puntos Máximos de S")
-plt.scatter([point[0] for point in max_s_points], [point[1] for point in max_s_points], c='red', label='S')
-plt.xlabel('Valor de x')
-plt.ylabel('Coordenada y')
-plt.legend()
-print("salio bien")
+v_maximos = encontrar_puntos_maximos(imagen_recortada_hsv, muestras_puntos) 
+print(v_maximos)
+encontrar_recta(v_maximos)
+#Agarrar indice y no  valor 
 
 
-plt.subplot(1, 2, 2)
-plt.title("Puntos Máximos de V")
-plt.scatter([point[0] for point in max_v_points], [point[1] for point in max_v_points], c='blue', label='V')
-plt.xlabel('Valor de x')
-plt.ylabel('Coordenada y')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
 # carpeta_base = '/home/ale/Documents/repos/Images Process/base'
 
 # imagen_base_array = armado_rutas(carpeta_base)
 # for imagen_base, nombre_base in imagen_base_array:
 #     imagen_base_recortada, nombre_base_recortada = recortar_imagen(imagen_base,x, y, anch, alto, nombre_base ) 
-# #funcion para poder trabajar con la base y dejarla como variable global. 
+# #funcion para poder trabajar con la base y dejarla como variable global.
 
+z = encontrar_recta(v_maximos)
 
+x = [point[0] for point in v_maximos]
+y = [point[2] for point in v_maximos]
 
+#idiotaaaaa!! 
 
-# Diferencia_base = cv.imread('/home/ale/Documents/repos/Images Process/base_recortada.jpg')
-# diferencia_recortada = cv.imread('/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada.jpg')
-# diferencia_imagenes(Diferencia_base, diferencia_recortada)
+x_pred = np.linspace(min(x), max(x), 100)
+y_pred = z[0] * x_pred + z[1]
 
+plt.imshow(imagen_recortada_hsv, cmap='hsv')
+plt.plot(x_pred, y_pred, color='red')
 
+plt.scatter([point[0] for point in v_maximos], [point[1] for point in v_maximos], c='blue', label='Puntos máximos')
 
+plt.show()
