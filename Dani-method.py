@@ -2,17 +2,23 @@ import cv2 as cv
 import numpy as np
 import os
 from matplotlib import pyplot as plt 
+import skimage as skm
 
 #hacer 6 cortes antes de procesar imagenn??
 
 
 
-def diferencia_imagenes (imagen1, imagen2):
+def diferencia_imagenes (imagen1,nombre_1, imagen2,nombre_2):
     peso_a = 1
     peso_b = 2
+    nombre_salida_1 = f"{os.path.splitext(nombre_1)[_]}"
+    nombre_salida_2 = f"{os.path.splitext(nombre_2)[_]}"
+    nombre_salida = f"{(nombre_salida_1)-(nombre_salida_2)}.jpg"
+
+
   #Acomodar funcion para que devuelva ademas de la imagen, el nombre dentro de un array 
     diferencia = cv.addWeighted(imagen1, peso_a, -imagen2, peso_b, .5)
-    cv.imwrite("diferencia.jpg" , diferencia)
+    cv.imwrite(nombre_salida , diferencia)
     return diferencia
 
 
@@ -87,10 +93,6 @@ def pasar_hsv(imagen, nombre_imagen):
     imagen_convertida = cv.cvtColor(imagen, cv.COLOR_BGR2HSV)
     nombre_salida_hsv = f"{os.path.splitext(nombre_imagen)[0]}_hsv.jpg"
     cv.imwrite(nombre_salida_hsv, imagen_convertida)
-
-    h, s, v = cv.split(imagen_convertida)
-
-
     return imagen_convertida, nombre_salida_hsv
 
 
@@ -113,7 +115,7 @@ def encontrar_recta (array_ordenadas):
     y = []
     for xmax, index,  vmax in array_ordenadas :
         x.append(xmax)
-        y.append(vmax)
+        y.append(index)
     print ("x:",x)
     print ("y:",y)
     z = np.polyfit(x, y, 1)
@@ -160,12 +162,20 @@ z = encontrar_recta(v_maximos)
 x = [point[0] for point in v_maximos]
 y = [point[2] for point in v_maximos]
 
+pendiente =z[0]
+
+angulo = np.degrees(np.arctan(pendiente))
+print ("el angulo es :",angulo)
+
 #idiotaaaaa!! 
 
 x_pred = np.linspace(min(x), max(x), 100)
 y_pred = z[0] * x_pred + z[1]
 
-plt.imshow(imagen_recortada_hsv, cmap='hsv')
+
+
+imagen_rotada =skm.transform.rotate(imagen_recortada_hsv,angle =  angulo ,resize=False, mode='constant')
+plt.imshow(imagen_rotada, cmap='hsv')
 plt.plot(x_pred, y_pred, color='red')
 
 plt.scatter([point[0] for point in v_maximos], [point[1] for point in v_maximos], c='blue', label='Puntos máximos')

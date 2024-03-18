@@ -1,40 +1,31 @@
-import os
-import cv2 as cv
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
-def recortar_imagen(imagen_leida, x, y, ancho, alto, nombre_original):
-    imagen_recortada = imagen_leida[y:y+alto, x:x+ancho]
-    nombre_salida = f"{os.path.splitext(nombre_original)[0]}_recortada.jpg"
-    print(f"Salio todo bien con {nombre_salida}")
-    cv.imwrite(nombre_salida, imagen_recortada)
-    return imagen_recortada, nombre_salida
 
-def armado_rutas(directorio):
-    imagenes = []
+def funcion_ajuste(x, A, sigma, offset,centro):
+    return A/sigma * np.exp(-1/2*((x-centro)/sigma)**2) + offset
 
-    directorio_recorrido = os.listdir(directorio)
 
-    for archivo in directorio_recorrido:
-        if archivo is not None:
-            imagen = os.path.join(directorio, archivo)
-            nombre_salida, _ = os.path.splitext(archivo)
-            imagen_leida = cv.imread(imagen)
+def resumen(names,values,diagsqrt):
+    for i in range(len(names)):
+        print(names[i],": \t","{0:0.5f}".format(values[i]),"\t +/- ","{0:0.5f}".format(diagsqrt[i]))
 
-            if imagen_leida is not None:
-                imagenes.append((imagen_leida, nombre_salida))
-                print(f"Salio todo piola con {nombre_salida}")
-            else:
-                print(f"No se pudo cargar la imagen: {imagen}")
-        else:
-            print('Ale la cago')
-    return imagenes
+parametros=["Amplitud","sigma   ","offset  ","centro  "]
 
-# Rutas de las imágenes
-carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
+# datos inventados
+x_medido=np.linspace(-5,10,82)
+y_medido=funcion_ajuste(x_medido+np.random.rand(np.size(x_medido))-.5,3,2,.5,4)
 
-# Obtener lista de imágenes y nombres
-imagenes = armado_rutas(carpeta)
 
-# Recortar cada imagen en la lista
-x, y, anch, alto = 700, 0, 900, 900
-for imagen_a, nombre_a in imagenes:
-    recortar_imagen(imagen_a, x, y, anch, alto, nombre_a)
+popt, pcov = curve_fit(funcion_ajuste, x_medido, y_medido)
+
+resumen(parametros,popt,np.diag(pcov)**(1/2))
+
+x_ajuste=x_medido
+y_ajuste=funcion_ajuste(x_ajuste,*popt)
+
+plt.figure()
+plt.scatter(x_medido,y_medido)
+plt.plot(x_medido,y_ajuste)
+plt.show()
