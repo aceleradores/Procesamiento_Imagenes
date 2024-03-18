@@ -130,8 +130,18 @@ carpeta = '/home/ale/Documents/repos/Images Process/imagenes'
 
 # #entorno de pruebas, no lo borres
 imagenes_leidas = []
+imagenes_diferencias  =  []
 imagenes_hsv = []
 array_imagenes = armado_rutas(carpeta)
+
+
+
+
+
+
+
+
+
 for imagen_a , nombre_a in array_imagenes:
     imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
     imagenes_leidas.append((imagen_recortada, nombre_original))
@@ -150,11 +160,15 @@ encontrar_recta(v_maximos)
 #Agarrar indice y no  valor 
 
 
-# carpeta_base = '/home/ale/Documents/repos/Images Process/base'
+carpeta_base = '/home/ale/Documents/repos/Images Process/base'
 
-# imagen_base_array = armado_rutas(carpeta_base)
-# for imagen_base, nombre_base in imagen_base_array:
-#     imagen_base_recortada, nombre_base_recortada = recortar_imagen(imagen_base,x, y, anch, alto, nombre_base ) 
+imagen_base_array = armado_rutas(carpeta_base)
+for imagen_base, nombre_base in imagen_base_array:
+    imagen_base_recortada, nombre_base_recortada = recortar_imagen(imagen_base,x, y, anch, alto, nombre_base ) 
+
+
+
+
 # #funcion para poder trabajar con la base y dejarla como variable global.
 
 z = encontrar_recta(v_maximos)

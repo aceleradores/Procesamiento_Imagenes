@@ -1,0 +1,53 @@
+1 recortar fondo 
+    base como variable global 
+
+Tengo que modificar para que trabajen recorriendo el array
+me parece mas practico 
+
+sumar valores en una direccion y hallar el maximo. 
+
+
+50 datos para evaluar 
+
+puntos de tchevichef buscar
+
+errores de los parametros => 
+
+buen tiempo => proceso de imagen termina cuanod recibo imagen => maximo ideal 10 imgenes por segundo
+                                                                esperado  1 s / imagen 
+
+
+funciones tic toc
+
+
+revisar con imagenes para evitar falsos positivos y negativos  y ver que pasa
+
+
+
+
+buscar try catch 
+
+
+
+
+
+
+obejtivo martes => encontrar centorides en varios puntos 
+    del la imagen (punto de maxima intensidad en una linea)
+    Para esto  necesito
+        restar fondo 
+        encontrar el valor  de x0 intensidad maxima
+         => Buscar valor maximo de V? o de S? 
+
+
+ajustar con un corte = quedarme con una variable independiente
+
+representar corte para ver como se ve
+
+
+
+
+paso a paso?
+    1 centrar las imagenes  
+        1 pasar a hsv y uint 8
+        2 buscar el
