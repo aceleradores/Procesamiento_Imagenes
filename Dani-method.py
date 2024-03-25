@@ -19,7 +19,7 @@ def diferencia_imagenes (imagen1,nombre_1, imagen2,nombre_2):
   #Acomodar funcion para que devuelva ademas de la imagen, el nombre dentro de un array 
     diferencia = cv.addWeighted(imagen1, peso_a, -imagen2, peso_b, .5)
     cv.imwrite(nombre_salida , diferencia)
-    return diferencia
+    return diferencia, nombre_salida
 
 
 
@@ -29,7 +29,7 @@ def convertir_gris (imagen):
     return gray_image
     
 
-def imagen_binary (imagen1):
+def imagen_binary (imagen1, nombre_a):
     imagen_gris = cv.cvtColor(imagen1, cv.COLOR_BGR2GRAY) 
     # blur = cv.GaussianBlur(imagen_gris,(5,5),0)
     ret3,th3 = cv.threshold(imagen_gris,90,255,cv.THRESH_BINARY)
@@ -152,6 +152,12 @@ for imagen_a , nombre_a in array_imagenes:
 nombre_base_recortada = None
 imagen_base_recortada = None
 
+
+def funcion_ajuste(x, A, sigma, offset,centro):
+    return A/sigma * np.exp(-1/2*((x-centro)/sigma)**2) + offset
+
+
+#el centro ya lo tengo, es 
 
 
 v_maximos = encontrar_puntos_maximos(imagen_recortada_hsv, muestras_puntos) 

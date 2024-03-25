@@ -51,3 +51,8 @@ paso a paso?
     1 centrar las imagenes  
         1 pasar a hsv y uint 8
         2 buscar el
+
+
+
+Ideas locas => para encontrar valores de apertura de haz, donde x0 ya lo tengo, Vx==> pendiente =>0 , el tamaño incial ya lo tengo? 
+evolucion tambien pero
