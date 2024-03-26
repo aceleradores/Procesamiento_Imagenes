@@ -124,11 +124,26 @@ def encontrar_puntos_maximos(imagen_hsv, lineas):
     return v_maximos
 
 
-
-def encontrar_limite (imagen, lineas):
+def encontrar_limite(imagen, lineas):
+    valores_y = []
     cambio_fase = []
-    for x in lineas: 
-        fila = 
+
+    for linea in lineas:
+        if not all(len(row) > linea for row in imagen):
+            continue  # Salta la línea si alguna fila no tiene suficientes elementos
+
+        valor_anterior = None
+        for y, row in enumerate(imagen):
+            pixel = row[linea]
+            valor_y = pixel[0]
+            valores_y.append(valor_y)
+
+            if valor_anterior is not None and valor_y != valor_anterior:
+                cambio_fase.append((valor_y, y))  # Guarda valor Y y su índice
+
+            valor_anterior = valor_y
+
+    return valores_y, cambio_fase
 
 
 def encontrar_recta (array_ordenadas):
