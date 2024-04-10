@@ -4,9 +4,6 @@ import os
 from matplotlib import pyplot as plt 
 import skimage as skm
 
-#hacer 6 cortes antes de procesar imagenn??
-
-
 
 def diferencia_imagenes (imagen1,nombre_1, imagen2,nombre_2):
     peso_a = 1
@@ -27,13 +24,18 @@ def obtener_puntos_eje_x(imagen):
 
     return datos_x
 
-def convertir_gris (imagen, nombre):
+def otsu (imagen, nombre):
     h, s, v = cv.split(imagen)
     ret3,th3 = cv.threshold(v ,0,255,cv.THRESH_BINARY_INV + cv.THRESH_OTSU)
-    nombre_salida = f"{os.path.splitext(nombre)[0]}-gris.jpg"
+    nombre_salida = f"{os.path.splitext(nombre)[0]}-otsu.jpg"
     cv.imwrite(nombre_salida, th3)
     return th3, nombre_salida
-    
+
+def convertir_gris (imagen, nombre):
+    nombre_salida = f"{os.path.splitext(nombre)[0]}-gris.jpg"
+    gris =  cv.cvtColor(imagen, cv.COLOR_RGB2GRAY)
+    return gris, nombre_salida
+
 
 
 def imagen_binary(imagen1, nombre):
@@ -52,12 +54,6 @@ def imagen_binary(imagen1, nombre):
     cv.imwrite(nombre_imagen, imagen_convertida)
 
     return imagen_convertida, nombre_imagen
-
-# def imagen_limpia (imagen_limpia):
-#     kernel = np.ones((5,5),np.uint8)
-#     erosion = cv.erode(imagen_limpia,kernel,iterations = 1)
-#     cv.imwrite("imagenlimpia2.jpg", erosion)
-#     return erosion
 
 
 
@@ -123,27 +119,18 @@ def encontrar_puntos_maximos(imagen_hsv, lineas):
         #Ojo! Revisar para ver si se puede encontrar mejor manera
     return v_maximos
 
+def graficar_datos(imagen, linea):
+    v = imagen[:,:,2]
+    
+    valores_y = [v[:, y] for y in linea]
+    indices = [np.arange(len(v)) for _ in linea]
+    
+    valores_y = np.concatenate(valores_y)
+    indices = np.concatenate(indices)
+    
+    return indices, valores_y
 
-def encontrar_limite(imagen, lineas):
-    valores_y = []
-    cambio_fase = []
-
-    for linea in lineas:
-        if not all(len(row) > linea for row in imagen):
-            continue  # Salta la línea si alguna fila no tiene suficientes elementos
-
-        valor_anterior = None
-        for y, row in enumerate(imagen):
-            pixel = row[linea]
-            valor_y = pixel[0]
-            valores_y.append(valor_y)
-
-            if valor_anterior is not None and valor_y != valor_anterior:
-                cambio_fase.append((valor_y, y))  # Guarda valor Y y su índice
-
-            valor_anterior = valor_y
-
-    return valores_y, cambio_fase
+# Graficar la distribución de la variable y comparar con una distribución de probabilidad adecuada.
 
 
 def encontrar_recta (array_ordenadas):
@@ -174,12 +161,57 @@ def ajustar_angulo (valores_maximos, imagen, nombre):
     return imagen_rotada, nombre_salida, x_pred, y_pred
 
 
+def graficar_datos_imagen(imagen, linea):
+    v = imagen[:,:,2]
+    valores_y = []
+    indices = []
+    
+    for y in linea:
+        valor_y = v[:, y]
+        indices.extend(list(range(len(valor_y))))
+        valores_y.extend(valor_y)
+    return indices, valores_y
+    
+
+
+def graficar_datos(imagen, linea):
+    v = imagen[:,:,2]
+    valores_y = []
+    indices = []
+    
+    for y in linea:
+        valor_y = v[:, y]
+        indices.extend(list(range(len(valor_y))))
+        valores_y.extend(valor_y)
+    return indices, valores_y
+
+def encontrar_limite(imagen, lineas):
+    valores_y = []
+    cambio_fase = []
+
+    for linea in lineas:
+        if not all(len(row) > linea for row in imagen):
+            continue  # Salta la línea si alguna fila no tiene suficientes elementos
+
+        valor_anterior = None
+        for y, row in enumerate(imagen):
+            pixel = row[linea]
+            valor_y = pixel[0]
+            valores_y.append(valor_y)
+
+            if valor_anterior is not None and valor_y != valor_anterior:
+                cambio_fase.append((linea, valor_y, y))  # Guarda valor Y y su índice
+
+            valor_anterior = valor_y
+
+    return valores_y, cambio_fase
+
 
 
 # x, y, anch, alto = 0, 150 , 640, 170
 x, y, anch, alto = 720, 200, 800, 300
 
-muestras_puntos = [100, 200, 300, 400, 500, 600]
+muestras_puntos = [100]
 
 # recortar_imagen(img1, x, y, anch, alto)
 carpeta_base = "/home/ale/Documents/repos/Images Process/base"
@@ -198,48 +230,15 @@ imagenes_a_binario = []
 
 test = []
 
-
-
-for imagen_a , nombre_a in array_imagenes:
-    imagen_recortada, nombre_original = recortar_imagen(imagen_a, x , y , anch, alto, nombre_a)
-    imagenes_leidas.append((imagen_recortada, nombre_original))
-    
-
 nombre_base_final = None
 imagen_base_final = None
 
-
+#Procesamineto de la base
 imagen_base_array = armado_rutas(carpeta_base)
 for imagen_base, nombre_base in imagen_base_array:
     imagen_base_recortada, nombre_base_recortada = recortar_imagen(imagen_base,x, y, anch, alto, nombre_base ) 
     imagen_base_final, nombre_base_final = pasar_hsv(imagen_base_recortada, nombre_base_recortada)
 
-for imagen_diferencia, nombre_difrencia  in imagenes_leidas:
-    imagen_diferencia, nombre_difrencia = pasar_hsv( imagen_diferencia, nombre_difrencia)
-    imagenes_enderezadas.append((imagen_diferencia, nombre_difrencia))
-
-for imagena, nombrea in imagenes_enderezadas:
-    imagen_binaria, nombre_binario = convertir_gris(imagena,nombrea)
-    imagenes_a_binario.append((imagen_binaria, nombre_binario))
-
-for imagenbinaria, nombrebinaria in imagenes_a_binario:
-    imagen_limpia, nombre_limpia   = imagen_binary(imagenbinaria, nombrebinaria )
-    imagenes_ajustadas.append(imagen_limpia, nombre_limpia)
-
-for imagerebinaria, nombrerebinario in imagenes_ajustadas:
-    imagen_rebinaria, nombre_rebinario = imagen_binary(imagerebinaria, nombrerebinario)
 
 
-
-# for imagen_recortada, nombre_recortado in imagen_recortadas:
-#     v_maximos = encontrar_puntos_maximos(imagen_recortada_hsv, muestras_puntos) 
-#     print(v_maximos)
-#     ajustar_angulo(v_maximos,)
-
-
-# plt.imshow(imagen_rotada, cmap='hsv')
-# plt.plot(x_pred, y_pred, color='red')
-
-# plt.scatter([point[0] for point in v_maximos], [point[1] for point in v_maximos], c='blue', label='Puntos máximos')
-
-# plt.show()
+                

@@ -1,31 +1,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
+from scipy.stats import poisson
 
+# Parámetros de las distribuciones de Poisson
+lambda1 = 3
+lambda2 = 5
 
-def funcion_ajuste(x, A, sigma, offset,centro):
-    return A/sigma * np.exp(-1/2*((x-centro)/sigma)**2) + offset
+# Simular 1000 muestras de X e Y
+num_samples = 1000
+X = np.random.poisson(lambda1, num_samples)
+Y = np.random.poisson(lambda2, num_samples)
 
+# Calcular la variable Z = X - Y
+Z = X - Y
 
-def resumen(names,values,diagsqrt):
-    for i in range(len(names)):
-        print(names[i],": \t","{0:0.5f}".format(values[i]),"\t +/- ","{0:0.5f}".format(diagsqrt[i]))
+# Graficar la distribución de Z
+plt.figure(figsize=(8, 6))
+plt.hist(Z, bins=20, density=True, edgecolor='black')
 
-parametros=["Amplitud","sigma   ","offset  ","centro  "]
+# Calcular la distribución de probabilidad teórica
+z_values = np.arange(min(Z), max(Z) + 1)
+p_z = poisson.pmf(z_values, lambda1 - lambda2)
 
-# datos inventados
-x_medido=np.linspace(-5,10,82)
-y_medido=funcion_ajuste(x_medido+np.random.rand(np.size(x_medido))-.5,3,2,.5,4)
-
-
-popt, pcov = curve_fit(funcion_ajuste, x_medido, y_medido)
-
-resumen(parametros,popt,np.diag(pcov)**(1/2))
-
-x_ajuste=x_medido
-y_ajuste=funcion_ajuste(x_ajuste,*popt)
-
-plt.figure()
-plt.scatter(x_medido,y_medido)
-plt.plot(x_medido,y_ajuste)
+# Graficar la distribución teórica
+plt.plot(z_values, p_z, 'r-', lw=2, label='Distribución teórica')
+plt.xlabel('Valor de Z')
+plt.ylabel('Densidad de probabilidad')
+plt.title('Distribución de la variable Z = X - Y')
+plt.legend()
 plt.show()
