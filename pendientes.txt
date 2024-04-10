@@ -27,32 +27,3 @@ revisar con imagenes para evitar falsos positivos y negativos  y ver que pasa
 
 buscar try catch 
 
-
-
-
-
-
-obejtivo martes => encontrar centorides en varios puntos 
-    del la imagen (punto de maxima intensidad en una linea)
-    Para esto  necesito
-        restar fondo 
-        encontrar el valor  de x0 intensidad maxima
-         => Buscar valor maximo de V? o de S? 
-
-
-ajustar con un corte = quedarme con una variable independiente
-
-representar corte para ver como se ve
-
-
-
-
-paso a paso?
-    1 centrar las imagenes  
-        1 pasar a hsv y uint 8
-        2 buscar el
-
-
-
-Ideas locas => para encontrar valores de apertura de haz, donde x0 ya lo tengo, Vx==> pendiente =>0 , el tamaño incial ya lo tengo? 
-evolucion tambien pero
