@@ -1,5 +1,7 @@
 import cv2 as cv
 import numpy as np
+from matplotlib import pyplot as plt 
+
 def extraer_valores_y_indice(imagen, lineas):
     valores_y = []  
     cambio_fase = []  
@@ -20,13 +22,15 @@ def extraer_valores_y_indice(imagen, lineas):
             
     return valores_y, cambio_fase
 
-imagen = cv.imread("/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada_hsv-gris-dilate-erode.jpg")
+imagen = cv.imread("/home/ale/Documents/repos/Images Process/20220204121951__800_1999983_recortada.jpg")
 
 
 x_pos_especifico = [100]
+
 valores_y_extraidos, cambios_de_fase = extraer_valores_y_indice(imagen, x_pos_especifico)
 
 
-
-print("valores de y:", valores_y_extraidos)
 print ("Cambio de fase " , cambios_de_fase)
+
+plt.plot(valores_y_extraidos)
+plt.show()
